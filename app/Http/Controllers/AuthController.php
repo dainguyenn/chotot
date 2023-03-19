@@ -46,20 +46,25 @@ class AuthController extends Controller
         }
 
         $user = User::where('email', $request['email'])->first();
-        if($user == null || !Hash::check($request['password'],$user->password)){
-            return response(['message'=>'invalid email or password'],401);
+        if ($user == null || !Hash::check($request['password'], $user->password)) {
+            return response(['message' => 'Invalid email or password'], 401);
         }
-        $token = $user->createToken('chotot')->plainTextToken ; 
+        $token = '';
+        if ($user->is_admin) {
+            $token = $user->createToken('chotot', ['ROLE_ADMIN'])->plainTextToken;
+        } else {
+            $token = $user->createToken('chotot', ['ROLE_USER'])->plainTextToken;
+        }
         return response([
             'user' => $user,
-            'token' => $token 
+            'token' => $token
         ], 201);
 
 
     }
 
-    public function test()
+    public function test(Request $request)
     {
-        return response()->json('abc', 200);
+        return $request;
     }
 }

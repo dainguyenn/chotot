@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\admin\CategoryController;
-use App\Http\Controllers\AuthController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\admin\PostController;
+use App\Http\Controllers\AuthController; 
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,9 +19,22 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::post('/sigup',[AuthController::class,'sigup']);
-Route::post('/login',[AuthController::class,'login']);
+Route::post('/login',[AuthController::class,'login']); 
+Route::middleware(['auth:sanctum','abilities:ROLE_ADMIN'])->group(function(){
 
-Route::middleware('auth:sanctum')->group(function(){
-    Route::post('category',[CategoryController::class,'createCategory']);
+    Route::controller(CategoryController::class)->prefix('category')->group(function ()
+    {
+        Route::get('','getAll');
+        Route::post('','createCategory');
+        Route::get('/parent','getParentCategory');  
+        Route::get('/{category}','getSubCategory');
+        Route::delete('/{category}','deleteCategory');
+    });
+     
+    Route::controller(PostController::class)->prefix('post')->group(function ()
+    {
+        Route::post('','createPost');
+    });
+    Route::get('/',[AuthController::class,'test']);
 });
  
