@@ -28,4 +28,9 @@ class Post extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function postImgStore()
+    {
+        return $this->belongsToMany(PostImgStore::class,'post_imgs');
+    }
 }
